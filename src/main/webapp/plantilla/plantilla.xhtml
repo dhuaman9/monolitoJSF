@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"  
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    
+    
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <h:outputStylesheet name="/css/default.css"/>
+            <h:outputStylesheet name="/css/cssLayout.css"/>
+        <title>365 EyC</title>
+    </h:head>
+
+    <h:body>
+        <div id="divGeneral">
+        <div id="top">
+              <div id="menuPrincipal">
+                  <ui:insert name="top"></ui:insert>
+                  <h1 align="center"> 365 Engineering y Consulting </h1>
+
+                  <div id="sessionUsuario"  style="width: 300px;float:right;">
+                      <h:form>
+                          <p:outputLabel value=" Usuario  :   " /> 
+                          <p:outputLabel value="#{loginBean.usuario.username}   " />
+                          <p:commandButton id="btnSalir" value="salir" action="#{loginBean.cerrarSession()}"/>
+                      </h:form>
+
+                  </div><br/><br/><br/>
+            
+                <h:form>  
+                    <p:menubar>
+                        <p:menuitem value="Inicio"  outcome="/index" />
+                        <p:menuitem value="Usuarios" rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}"  outcome="/Views/Usuarios/Usuario" icon="pi pi-angle-double-left" />  
+                        <p:menuitem value="Clientes" rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}"  outcome="/Views/Clientes/Cliente" icon="pi pi-angle-double-left" />  
+                        <p:menuitem value="Proyectos"   outcome="/Views/Proyectos/Proyectos" icon="pi pi-angle-double-left" />  
+                       
+                    </p:menubar>
+                  </h:form> 
+            </div>
+        </div>
+
+        <div id="content" class="center_content">
+            <ui:insert name="content">Content</ui:insert>
+        </div>
+        <div id="bottom">
+            <ui:insert name="bottom">&copy; 2020   -  365 Engineering y Consulting</ui:insert>
+        </div>
+     </div>       
+    </h:body>
+ <script>
+            PrimeFaces.locales['es'] = {
+                    closeText: 'Cerrar',
+                    prevText: 'Anterior',
+                    nextText: 'Siguiente',
+            monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+            dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText: 'Todo el día'
+        };
+
+    </script>
+</html>

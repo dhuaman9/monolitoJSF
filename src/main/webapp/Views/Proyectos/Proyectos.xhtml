@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <head>
+        
+        <script type="text/javascript">
+
+</script>
+    </head>
+    <body >
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+                 <h2> Proyectos</h2><br/>
+               <p:growl id="messages2"  showDetail="true"  life="3000" />
+               <h:form rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}" >
+                       <p:commandButton value="Nuevo Proyecto"  oncomplete="PF('dialogNuevoProyecto').show()" 
+                                     actionListener="#{proyectosBean.prepararNuevoProyecto()}" update=":formNuevoProyecto" />
+                   
+                </h:form>  <br/>
+                  
+                <h:form id="formMostrarProyectos">
+                    <p:dataTable id="tablaProyectos"  rowIndexVar="rowId" paginator="true" paginatorPosition="top" rows="10" var="proj" 
+                     value="#{loginBean.usuario.roles.nombre == 'ADMIN' ? proyectosBean.listaProyectos : proyectosBean.obtenerListaProyectosxUsers(loginBean.usuario.username)}" 
+                     emptyMessage="No hay Proyectos" lazy="true">
+
+                        <p:column headerText="Nro">
+                            <h:outputText value="#{rowId+1}" />
+                        </p:column>
+                        <p:column headerText=" Proyecto ">
+                            <h:outputText value="#{proj.proyecto}"/>
+                        </p:column>
+                        <p:column headerText="Estado">
+                           <h:outputText value="#{ proj.estado == true ? 'activo': 'inactivo'}"/>
+                        </p:column>
+                        <p:column headerText="Usuario">
+                            <h:outputText value="#{proj.usuarios.username}"/>
+                        </p:column>
+                        <p:column headerText="Ver mas" >
+                            <p:commandButton value="Ver"  oncomplete="PF('dialogVerProyecto').show()" 
+                                             update=":formVerProyecto"  >
+                                <f:setPropertyActionListener target="#{proyectosBean.proyecto}" value="#{proj}" />
+                            </p:commandButton>
+                        </p:column>
+                        <p:column  headerText="Archivos"  >
+                        <!-- boton que dirige a la pagina de archivos -->
+                            <p:button outcome="/Views/Proyectos/Archivos" value="VER"  >
+                                <f:param name="proyectoId" value="#{proj.id}" />
+                            </p:button>
+                           
+                        </p:column>
+                        <p:column rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}" headerText="Modificar">
+                            <p:commandButton value="Modificar"  oncomplete="PF('dialogModificarProyecto').show()" 
+                                             update=":formModificarProyecto"  >
+                                <f:setPropertyActionListener target="#{proyectosBean.proyecto}" value="#{proj}" />
+                            </p:commandButton>
+                        </p:column>
+<!--                        <p:column rendered="{loginBean.usuario.roles.nombre == 'ADMIN'}" headerText="Eliminar">
+                            <p:commandButton value="Eliminar" oncomplete="PF('dialogEliminarProyecto').show()" 
+                                             update=":formEliminarProyecto">
+                                <f:setPropertyActionListener target="{proyectosBean.proyecto}" value="{proj}" />
+                            </p:commandButton>
+                        </p:column>-->
+                    </p:dataTable>
+                </h:form> 
+                 
+                   <h:form id="formNuevoProyecto">
+
+                    <p:dialog id="dlgNuevoProyecto" widgetVar="dialogNuevoProyecto" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+                        <p:panelGrid columns="2" style="margin:0 auto;">
+                            <p:outputLabel value="Proyecto" />
+                            <p:inputText required="true" value="#{proyectosBean.proyecto.proyecto}"/>
+                            <p:outputLabel value="Descripcion" />
+                            <p:inputTextarea required="true" rows="6" cols="30" value="#{proyectosBean.proyecto.descripcion}" maxlength="2000" />
+                            <p:outputLabel value="estado" />
+                            <p:inputSwitch  value="#{proyectosBean.proyecto.estado}" onLabel="activo" offLabel="inactivo" onchange="check()" />
+                            <p:outputLabel value="Usuario: " />
+                            <p:selectOneMenu required="true" id="user1" value="#{proyectosBean.proyecto.usuarios.id}"  effect="fade" style="width:160px" filter="true"  filterMatchMode="startsWith">
+                                <f:selectItem itemLabel="--seleccione--" itemValue=""/>
+                                <f:selectItems value="#{proyectosBean.usuariosList}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="popup" value="Fecha expiracion" />
+                            <p:calendar  id="popup" value="#{proyectosBean.proyecto.fechaExpiracion}" required="true" locale="es" />
+
+                        </p:panelGrid>
+                         <br/>
+                        <p:commandButton value="Guardar" actionListener="#{proyectosBean.nuevoProyecto()}"
+
+                                         update=":formMostrarProyectos:tablaProyectos" 
+                                         oncomplete="PF('dialogNuevoProyecto').hide();"/>
+                        &nbsp;&nbsp;
+                        <p:commandButton value="Cancelar" 
+                                         oncomplete="PF('dialogNuevoProyecto').hide();"/>
+
+                    </p:dialog>
+
+                </h:form>
+                 
+
+                 <h:form id="formModificarProyecto">
+
+                 <p:dialog id="dlgModificarProyecto" widgetVar="dialogModificarProyecto" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+                         <p:panelGrid columns="2" style="margin:0 auto;">
+
+                            <p:outputLabel value="Proyecto" />
+                            <p:inputText required="true" value="#{proyectosBean.proyecto.proyecto}"/>
+                            <p:outputLabel value="Descripcion" />
+                            <p:inputTextarea required="true" rows="6" cols="30" value="#{proyectosBean.proyecto.descripcion}" maxlength="2000" />
+                            <p:outputLabel value="estado" />
+                            <p:inputSwitch  value="#{proyectosBean.proyecto.estado}" onLabel="activo" offLabel="inactivo" onchange="check()" />
+                            <p:outputLabel value="Usuario: " />
+                            <p:selectOneMenu required="true" id="user1" value="#{proyectosBean.proyecto.usuarios.id}"  effect="fade" style="width:160px" filter="true"  filterMatchMode="startsWith">
+                             <f:selectItem itemLabel="--seleccione--" itemValue=""/>
+                             <f:selectItems value="#{proyectosBean.usuariosList}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel for="popup2" value="Fecha expiracion" />
+                            <p:calendar  id="popup2" value="#{proyectosBean.proyecto.fechaExpiracion}" required="true" locale="es" />
+                            
+                        </p:panelGrid>
+                     <br/>
+                     <p:commandButton value="Guardar" actionListener="#{proyectosBean.modificarProyecto()}"
+
+                                         update=":formMostrarProyectos:tablaProyectos" 
+                                         oncomplete="PF('dialogModificarProyecto').hide();"/>
+                     &nbsp;&nbsp;
+                        <p:commandButton value="Cancelar" 
+                                         oncomplete="PF('dialogModificarProyecto').hide();"/>
+
+                    </p:dialog>
+
+                </h:form>
+                 
+                
+<!--                 <h:form id="formEliminarProyecto">
+
+                    <p:dialog id="dlgEliminarProyecto" widgetVar="dialogEliminarProyecto" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+
+                        <h:outputText value="Desea eliminar este registro?"/> <br/> <br/>
+                        <p:commandButton value="SI" actionListener="{proyectosBean.eliminarProyecto()}"
+                                         update=":formMostrarProyectos:tablaProyectos" 
+                                         oncomplete="PF('dialogEliminarProyecto').hide();"/>&nbsp;&nbsp;
+                        <p:commandButton value="NO" 
+                                         oncomplete="PF('dialogEliminarProyecto').hide()"/>
+
+                    </p:dialog>
+
+                </h:form>-->
+                
+                
+                 <h:form id="formVerProyecto">
+                    <p:dialog id="dlgVerProyecto" widgetVar="dialogVerProyecto" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+                       
+                      <p:panelGrid columns="2" style="margin:0 auto;">
+                            <p:outputLabel value="Nombre" />
+                            <p:outputLabel value="#{proyectosBean.proyecto.proyecto}"/>
+                            <p:outputLabel value="Descripcion" />
+                            <p:outputLabel value="#{proyectosBean.proyecto.descripcion}"/>
+                            <p:outputLabel value="Fecha de expiracion" />
+                            <p:outputLabel value="#{proyectosBean.proyecto.fechaExpiracion}"/>
+                             <p:outputLabel rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}" value="Fecha de registro" />
+                            <p:outputLabel rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}" value="#{proyectosBean.proyecto.fechaRegistro}"/>
+                            <p:outputLabel rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}" value="Fecha de modificacion" />
+                            <p:outputLabel rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}" value="#{proyectosBean.proyecto.fechaModificacion}"/>
+                     </p:panelGrid>
+                    </p:dialog>
+                 </h:form>
+                 
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 30/08/2021 10:25:00 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.monolito365.model.ArchivosProyectos" table="archivos_proyectos" catalog="monolito365" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="proyectos" class="com.monolito365.model.Proyectos" fetch="select">
+            <column name="proyecto_id" not-null="true" />
+        </many-to-one>
+        <property name="nombre" type="string">
+            <column name="nombre" length="100" not-null="true" />
+        </property>
+        <property name="ruta" type="string">
+            <column name="ruta" not-null="true" />
+        </property>
+        <property name="fechaRegistro" type="date">
+            <column name="fecha_registro" length="10" not-null="true" />
+        </property>
+        <property name="fechaModificacion" type="date">
+            <column name="fecha_modificacion" length="10" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+               <h2>Clientes</h2>
+              
+            
+               <h:form >
+                    <p:commandButton value="Nuevo cliente"  
+                                     oncomplete="PF('dialogNuevoCliente').show()" 
+                                     actionListener="#{clienteBean.prepararNuevoCliente()}" update=":formNuevoCliente"/>
+                   
+                </h:form><br/>
+                <h:form id="formMostraClientes">
+                    <p:dataTable id="tablaClientes"  paginator="true" paginatorPosition="top" rows="10"  var="cl" 
+                                 value="#{clienteBean.listaClientes}" emptyMessage="No hay clientes" lazy="true">
+
+                        <p:column headerText="Codigo">
+                            <h:outputText value="#{cl.id}"/>
+                        </p:column>
+                        <p:column headerText="Nombres ">
+                            <h:outputText value="#{cl.nombres} #{cl.apellidos}"/>
+                        </p:column>
+                        <p:column headerText="Usuario">
+                            <h:outputText value="#{cl.usuarios.username}"/>
+                        </p:column>
+                        <p:column headerText="Tipo de documento">
+                            <h:outputText value="#{cl.tipoDocumentos.descripcion}"/>
+                        </p:column>
+                        <p:column headerText="N° documento">
+                            <h:outputText value="#{cl.numeroDoc}"/>
+                        </p:column>
+                        
+                       <p:column headerText="Ver mas"  class="action" >
+                            <p:commandButton value="Ver"  oncomplete="PF('dialogVerCliente').show()" 
+                                             update=":formVerCliente"  >
+                                <f:setPropertyActionListener target="#{clienteBean.cliente}" value="#{cl}" />
+                                
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="Modificar">
+                            <p:commandButton value="Modificar"  oncomplete="PF('dialogModificarCliente').show()" 
+                                             update=":formModificarCliente"  >
+                                <f:setPropertyActionListener target="#{clienteBean.cliente}" value="#{cl}" />
+
+                            </p:commandButton>
+                        </p:column>
+                        <p:column headerText="Eliminar">
+                            <p:commandButton value="Eliminar" oncomplete="PF('dialogEliminarCliente').show()" 
+                                             update=":formEliminarCliente">
+                                <f:setPropertyActionListener target="#{clienteBean.cliente}" value="#{cl}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formNuevoCliente">
+
+                    <p:dialog id="dlgNuevoCliente" widgetVar="dialogNuevoCliente" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+                        <p:panelGrid columns="2" style="margin:0 auto;">
+
+                            <p:outputLabel value="Nombres" />
+                            <p:inputText value="#{clienteBean.cliente.nombres}" required="true"/>
+                            <p:outputLabel value="Apellidos" />
+                            <p:inputText value="#{clienteBean.cliente.apellidos}"/>
+                            <p:outputLabel value="Direccion" />
+                            <p:inputText value="#{clienteBean.cliente.direccion}" required="true"/>
+                            <p:outputLabel value="Telefono1" />
+                            <p:inputText value="#{clienteBean.cliente.telefono1}" required="true"/>
+                            <p:outputLabel value="Telefono2" />
+                            <p:inputText value="#{clienteBean.cliente.telefono2}"/>
+                            <p:outputLabel value="email" />
+                            <p:inputText value="#{clienteBean.cliente.email}" required="true"/>
+                            <p:outputLabel value="pagina web" />
+                            <p:inputText value="#{clienteBean.cliente.paginaWeb}"/>
+
+                            <p:outputLabel value="Usuario: " />
+                            <p:selectOneMenu id="user1" value="#{clienteBean.cliente.usuarios.id}" effect="fade" style="width:160px" filter="true" filterMatchMode="startsWith">
+                              <f:selectItem itemLabel="--seleccione--" itemValue=""/>
+                              <f:selectItems value="#{clienteBean.usuariosList}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Tipo Documento "  />
+                            <p:selectOneMenu id="tipodoc1" value="#{clienteBean.cliente.tipoDocumentos.id}" required="true" >
+                              <f:selectItem itemLabel="--seleccione--" itemValue=""/>
+                              <f:selectItems value="#{clienteBean.tiposDocList}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Numero Doc." />
+                            <p:inputText value="#{clienteBean.cliente.numeroDoc}" required="true"/>
+
+                        </p:panelGrid>
+                        <br/>
+                        <p:commandButton value="Guardar" actionListener="#{clienteBean.nuevoCliente()}"
+                                update=":formMostraClientes:tablaClientes" 
+                                oncomplete="PF('dialogNuevoCliente').hide();"/>
+                        &nbsp;&nbsp;
+                        <p:commandButton value="Cancelar" 
+                                         oncomplete="PF('dialogNuevoCliente').hide();"/>
+
+                    </p:dialog>
+
+                </h:form>
+              
+                <h:form id="formModificarCliente">
+
+                 <p:dialog id="dlgModificarCliente" widgetVar="dialogModificarCliente" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+                         <p:panelGrid columns="2" style="margin:0 auto;">
+
+                            <p:outputLabel value="Nombres" />
+                            <p:inputText value="#{clienteBean.cliente.nombres}" required="true"/>
+                            <p:outputLabel value="Apellidos" />
+                            <p:inputText value="#{clienteBean.cliente.apellidos}" />
+                            <p:outputLabel value="Direccion" />
+                            <p:inputText value="#{clienteBean.cliente.direccion}" required="true"/>
+                            <p:outputLabel value="Telefono1" />
+                            <p:inputText value="#{clienteBean.cliente.telefono1}" required="true"/>
+                            <p:outputLabel value="Telefono2" />
+                            <p:inputText value="#{clienteBean.cliente.telefono2}"/>
+                            <p:outputLabel value="email" />
+                            <p:inputText value="#{clienteBean.cliente.email}" required="true"/>
+                            <p:outputLabel value="pagina web" />
+                            <p:inputText value="#{clienteBean.cliente.paginaWeb}"/>
+
+                            <p:outputLabel value="Usuario: " />
+                            <p:selectOneMenu  id="user2"  value="#{clienteBean.cliente.usuarios.id}"  >
+                                <f:selectItem itemLabel="--seleccione--" itemValue=""/>
+                               
+                              <f:selectItems value="#{clienteBean.usuariosList}" />
+                             </p:selectOneMenu>
+
+                            <p:outputLabel value="Tipo Documento " />
+                            <p:selectOneMenu id="tipodoc2" value="#{clienteBean.cliente.tipoDocumentos.id}" required="true">
+                              <f:selectItem itemLabel="--seleccione--" itemValue=""/>
+                              <f:selectItems value="#{clienteBean.tiposDocList}" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Numero Doc." />
+                            <p:inputText value="#{clienteBean.cliente.numeroDoc}" required="true"/>
+
+                        </p:panelGrid>
+                        <br/>
+                        <p:commandButton value="Guardar" actionListener="#{clienteBean.modificarCliente()}"
+                                    update=":formMostraClientes:tablaClientes" 
+                                    oncomplete="PF('dialogModificarCliente').hide();"/>
+                        &nbsp;&nbsp;
+                        <p:commandButton value="Cancelar" 
+                                         oncomplete="PF('dialogModificarCliente').hide();"/>
+
+                    </p:dialog>
+
+                </h:form>
+                 <!--    Eliminar   -->
+
+                <h:form id="formEliminarCliente">
+
+                    <p:dialog id="dlgEliminarCliente" widgetVar="dialogEliminarCliente" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+
+                        <h:outputText value="Desea eliminar este registro?"/><br/><br/>
+                        <p:commandButton value="SI" actionListener="#{clienteBean.eliminarCliente()}"
+                                         update=":formMostraClientes:tablaClientes" 
+                                         oncomplete="PF('dialogEliminarCliente').hide();"/>&nbsp;
+                        <p:commandButton value="NO" 
+                                         oncomplete="PF('dialogEliminarCliente').hide():"/>
+
+                    </p:dialog>
+
+                </h:form>
+                 
+               <!--    Ver mas   -->
+
+               <h:form id="formVerCliente">
+                        <p:dialog id="dlgVerCliente" widgetVar="dialogVerCliente" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+                        <p:panelGrid columns="2" style="margin:0 auto;">
+                            <p:outputLabel value="direccion: " />
+                            <p:outputLabel value="#{clienteBean.cliente.direccion}"/>
+                            <p:outputLabel value="Telefono 1:  " />
+                            <p:outputLabel value="#{clienteBean.cliente.telefono1}"/>
+                            <p:outputLabel value="Telefono 2:  " />
+                            <p:outputLabel value="#{clienteBean.cliente.telefono2}"/>
+                            <p:outputLabel value="email: " />
+                            <p:outputLabel value="#{clienteBean.cliente.email}"/>
+                            <p:outputLabel  value="pagina_web: " />
+                            <p:outputLabel  value="#{clienteBean.cliente.paginaWeb}"/>
+                            <p:outputLabel value="fecha_registro: " />
+                            <p:outputLabel value="#{clienteBean.cliente.fechaRegistro}">
+                               <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </p:outputLabel>
+                            
+                        </p:panelGrid>
+                        <p:commandButton value="cerrar" oncomplete="PF('dialogVerCliente').hide()"/>
+                        
+                    </p:dialog>
+                 </h:form>
+               
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+    
+</html>

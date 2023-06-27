@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <f:metadata>
+            <f:viewParam name="proyectoId" value="#{archivoBean.proyectoId}"/>
+        </f:metadata>
+    </h:head>
+    <h:body>
+
+        <ui:composition template="./../../plantilla/plantilla.xhtml">
+
+            <ui:define name="content">
+               
+                <h2>Archivos del Proyecto</h2>
+<!--                <p:growl id="messages" showDetail="true" />-->
+
+               <p:growl id="messages"  showDetail="true"  life="3000" />
+                <h:form >
+                    <p:commandButton rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}"  value="Nuevo archivo"  
+                                     oncomplete="PF('dialogNuevoArchivo').show()" 
+                                     actionListener="#{archivoBean.prepararNuevoArchivo()}" update=":formNuevoArchivo"/>
+
+                </h:form><br/>
+
+                <h:form id="formMostrarFiles">
+                     
+                    <p:dataTable id="tablaFiles" rowIndexVar="rowId" paginator="true" paginatorPosition="top" rows="10"  var="file" 
+                                 value="#{archivoBean.listaArchivosxProyecto}" emptyMessage="No hay archivos" lazy="true">
+
+                        <p:column headerText="Nro">
+                            <h:outputText value="#{rowId+1}" />
+                        </p:column>
+                        <p:column headerText="Nombre ">
+                            <h:outputText value="#{file.nombre}"/>
+                        </p:column>
+                        <p:column headerText="Descargar">
+                            <h:commandButton value="Ver" action="#{archivoBean.download(file.ruta)}" onclick="this.form.target='_blank'"/>
+                        </p:column>
+                        <p:column rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}" headerText="Modificar">
+                            <p:commandButton value="Modificar"  oncomplete="PF('dialogModificarArchivo').show()" 
+                                             update=":formModificarArchivo"  >
+                                <f:setPropertyActionListener target="#{archivoBean.archivo}" value="#{file}" />
+
+                            </p:commandButton>
+                        </p:column>
+                        <p:column rendered="#{loginBean.usuario.roles.nombre == 'ADMIN'}" headerText="Eliminar">
+                            <p:commandButton value="Eliminar" oncomplete="PF('dialogEliminarArchivo').show()" 
+                                             update=":formEliminarArchivo">
+                                <f:setPropertyActionListener target="#{archivoBean.archivo}" value="#{file}" />
+                            </p:commandButton>
+                        </p:column>
+                    </p:dataTable>
+                    <br/>
+                    <p:commandButton value="regresar" onclick="javascript:window.location='Proyectos.xhtml';"   />
+                </h:form>
+
+                <h:form enctype="multipart/form-data" id="formNuevoArchivo" >
+
+                    <p:dialog id="dlgNuevoArchivo" widgetVar="dialogNuevoArchivo" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+
+                        <div id="upload-button">
+                            <h:inputFile id="fu" value="#{archivoBean.file}">
+                                <f:validator validatorId="fileUploadValidator"/>
+                            </h:inputFile>
+
+                        </div>
+                        <br/><br/>
+                        <p:commandButton value="Guardar" id="btnNuevo" actionListener="#{archivoBean.nuevoArchivo()}" ajax="false" 
+
+                                         update=":formMostrarFiles:tablaFiles :messages" 
+                                         oncomplete="PF('dialogNuevoArchivo').hide();"/>
+                        &nbsp;&nbsp;&nbsp;
+                        <p:commandButton value="Cancelar" 
+                                         oncomplete="PF('dialogNuevoArchivo').hide();"/>
+
+                    </p:dialog>
+
+                </h:form>  
+
+                <h:form enctype="multipart/form-data" id="formModificarArchivo">
+                    <p:dialog id="dlgModificarArchivo" widgetVar="dialogModificarArchivo" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+
+                        <div id="upload-button">
+                            <h:inputFile id="fu" value="#{archivoBean.file}">
+                                <f:validator validatorId="fileUploadValidator"/>
+                            </h:inputFile>
+
+                        </div>
+                        <br/><br/>
+                        <p:commandButton value="guardar" id="btnUpdate" actionListener="#{archivoBean.modificarArchivo()}" ajax="false" 
+                                         update=":formMostrarFiles:tablaFiles" 
+                                         oncomplete="PF('dialogModificarArchivo').hide();"/>
+                        &nbsp;&nbsp;&nbsp;
+                        <p:commandButton value="Cancelar" 
+                                         oncomplete="PF('dialogModificarArchivo').hide();"/>
+                    </p:dialog>
+
+                </h:form>
+
+                <h:form enctype="multipart/form-data" id="formEliminarArchivo">
+
+                    <p:dialog id="dlgEliminarArchivo" widgetVar="dialogEliminarArchivo" 
+                              resizable="false" showEffect="explode" hideEffect="explode"  modal="true" >
+
+                        <h:outputText value="Desea eliminar este archivo?"/>
+                        <br/><br/>
+                        <p:commandButton value="SI" actionListener="#{archivoBean.eliminarArchivo()}"
+                                         update=":formMostrarFiles:tablaFiles" 
+                                         oncomplete="PF('dialogEliminarArchivo').hide();"/>
+                        &nbsp;&nbsp;&nbsp;
+                        <p:commandButton value="NO" 
+                                         oncomplete="PF('dialogEliminarArchivo').hide();"/>
+
+                    </p:dialog>
+
+                </h:form>
+
+
+            </ui:define>
+
+        </ui:composition>
+
+    </h:body>
+</html>

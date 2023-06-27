@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 30/08/2021 10:25:00 AM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="com.monolito365.model.Proyectos" table="proyectos" catalog="monolito365" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="usuarios" class="com.monolito365.model.Usuarios" fetch="select">
+            <column name="usuario_id" not-null="true" />
+        </many-to-one>
+        <property name="proyecto" type="string">
+            <column name="proyecto" length="100" not-null="true" />
+        </property>
+        <property name="descripcion" type="string">
+            <column name="descripcion" length="65535" not-null="true" />
+        </property>
+        <property name="estado" type="boolean">
+            <column name="estado" not-null="true" />
+        </property>
+        <property name="fechaExpiracion" type="date">
+            <column name="fecha_expiracion" length="10" not-null="true" />
+        </property>
+        <property name="fechaRegistro" type="date">
+            <column name="fecha_registro" length="10" not-null="true" />
+        </property>
+        <property name="fechaModificacion" type="date">
+            <column name="fecha_modificacion" length="10" />
+        </property>
+        <set name="archivosProyectoses" table="archivos_proyectos" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="proyecto_id" not-null="true" />
+            </key>
+            <one-to-many class="com.monolito365.model.ArchivosProyectos" />
+        </set>
+    </class>
+</hibernate-mapping>
